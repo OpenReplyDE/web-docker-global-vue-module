@@ -1,3 +1,2 @@
-import * as vue from "vue";
+export * from "vue";
 
-export default vue;
