@@ -18,6 +18,11 @@ export default defineConfig(({ mode }) => {
         pages: [".*"],
       }),
     ],
+    define: {
+      process: {
+        NODE_ENV: 'production'
+      },
+    },
     build: {
       lib: {
         entry: resolve(__dirname, "src/main.ts"),
