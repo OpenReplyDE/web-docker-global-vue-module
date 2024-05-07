@@ -1,0 +1,50 @@
+name: Deploy
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          registry-url: https://npm.pkg.github.com/
+          scope: '@openreplyde'
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      - run: npm ci
+      - run: npm run build
+        env:
+          VITE_APP_BASE_PATH: ${{vars.VITE_APP_BASE_PATH}}
+      - uses: actions/upload-artifact@v3
+        with:
+          name: build-artifacts
+          path: dist
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
+
+  publish-s3:
+    needs: build
+    runs-on: ubuntu-latest
+    env:
+      S3_ENDPOINT: s3.amazonaws.com
+      S3_ASSETS_BUCKET: ${{ vars.AWS_BUCKET }}
+      S3_CONFIG_BUCKET: ${{ vars.CONFIG_AWS_BUCKET }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          node-version: 20
+      - uses: actions/download-artifact@v3
+        with:
+          name: build-artifacts
+          path: dist
+          node-version: 20
+      - run: aws s3 cp --recursive dist s3://${S3_ASSETS_BUCKET}/web-assets/vue-module/ --region eu-central-1
+      - run: aws s3 cp dist/vue-module.json s3://${S3_CONFIG_BUCKET}/configs/ --region eu-central-1
