@@ -26,6 +26,7 @@ export default defineConfig(({ mode }) => {
       },
     },
     build: {
+      minify: false,
       lib: {
         entry: resolve(__dirname, "src/main.ts"),
         name: "Vue",
