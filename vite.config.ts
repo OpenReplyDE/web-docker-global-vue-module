@@ -20,7 +20,9 @@ export default defineConfig(({ mode }) => {
     ],
     define: {
       process: {
-        NODE_ENV: 'production'
+        env: {
+          NODE_ENV: 'production'
+        },
       },
     },
     build: {
