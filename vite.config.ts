@@ -16,6 +16,9 @@ export default defineConfig(({ mode }) => {
         module: "vue-module",
         type: "page",
         pages: [".*"],
+        share: {
+          name: "vue",
+        }
       }),
     ],
     define: {
