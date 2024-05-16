@@ -7,9 +7,8 @@ import { create } from "@openreplyde/web-docker-vite-plugin";
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd());
   const base = env.VITE_APP_BASE_PATH || "/";
-  const exposeVue: string = resolve(__dirname, "./src/main.ts");
   const exposes: { [key: string]: string } = {
-    vue: exposeVue,
+    vue: "vue-module",
   };
   return {
     plugins: [
