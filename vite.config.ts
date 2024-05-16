@@ -7,6 +7,10 @@ import { create } from "@openreplyde/web-docker-vite-plugin";
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd());
   const base = env.VITE_APP_BASE_PATH || "/";
+  const exposeVue: string = resolve(__dirname, "./src/main.ts");
+  const exposes: { [key: string]: string } = {
+    vue: exposeVue,
+  };
   return {
     plugins: [
       vue(),
@@ -16,15 +20,14 @@ export default defineConfig(({ mode }) => {
         module: "vue-module",
         type: "page",
         pages: [".*"],
-        share: {
-          name: "vue",
-        }
+        scope: "webdocker",
+        exposes,
       }),
     ],
     define: {
       process: {
         env: {
-          NODE_ENV: 'production'
+          NODE_ENV: "production",
         },
       },
     },
